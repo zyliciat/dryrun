@@ -81,9 +81,15 @@ function get_reading(device_id, readings){
 }
 
 //api call
-async function api_call(endpoint) {
+async function api_call(endpoint, retries = 3) {
     try {
         const response = await fetch(endpoint);
+
+        //429 means too many requests: wait, then try again
+        if (response.status === 429 && retries > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+            return api_call(endpoint, retries - 1);
+        }
 
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}`);
