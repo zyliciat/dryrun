@@ -213,6 +213,11 @@ function classify_park(park){
         return "ok";
     }
 
+    //don't call a park good if a reading is missing
+    if (park.rainfall === "no reading" || park.forecast === "no reading"){
+        return "not good";
+    }
+
     return "good";
 }
 

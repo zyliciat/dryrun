@@ -138,6 +138,11 @@ button:hover{
     font: inherit;
 }
 
+/*heading above the results*/
+.section-title{
+    padding: 0 40px;     /* line up with the cards */
+}
+
 /*park result cards*/
 .response{
     text-align: left;
