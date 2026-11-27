@@ -1,5 +1,5 @@
 # dryrun
-Alicia Teo | github pages: https://zyliciat.github.io/dryrun/
+Alicia Teo | github pages url: https://zyliciat.github.io/dryrun/
 
 ### Contents
 1. [Overview](#1-overview)
@@ -94,4 +94,4 @@ Figma wireframe design process: https://www.figma.com/design/Tfalmy9SYrz2bxKi7cQ
 | [data.gov Environment Related APIs](https://data.gov.sg/datasets?formats=API&topics=environment) | NEA APIs |
 | [BEgg Website](https://www.b-egg.farm/) | Interesting website that was used for UI, styling inspiration |
 
-I also have to acknowledge the use of AI to assist with coding,g documents and generation of logos, graphics, park information etc.
+I also have to acknowledge the use of AI to assist with coding, documentation and generation of logos, graphics, park information etc.
