@@ -362,6 +362,34 @@ function update_settings(event){
     }
 }
 
+//move the logo based on how far the page is scrolled:
+//left edge at the top, right edge at the bottom, and back again on the way up
+function move_logo(){
+    //leave the logo centred for people who have turned animations off
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+        return;
+    }
+
+    const header = document.querySelector(".site-header");
+    const logo = document.querySelector(".logo");
+    //how far the page can scroll in total
+    const max_scroll = document.documentElement.scrollHeight - window.innerHeight;
+
+    //0 at the top of the page, 1 at the bottom
+    const progress = max_scroll > 0 ? Math.min(window.scrollY / max_scroll, 1) : 0;
+    const left_offset = (header.clientWidth - logo.offsetWidth) / 2;
+    const x = left_offset * (2 * progress - 1); //the logo's normal spot is the centre
+
+    //small hops while running
+    const y = -Math.abs(Math.sin(window.scrollY / 35)) * 3;
+
+    logo.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+window.addEventListener("scroll", move_logo);
+window.addEventListener("resize", move_logo);
+window.addEventListener("load", move_logo); //once the logo image has a width
+
 //set up the settings form and load the forecast when the page loads
 fill_settings();
 document.getElementById("settings_form").addEventListener("submit", update_settings);

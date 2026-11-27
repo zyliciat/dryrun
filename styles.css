@@ -68,6 +68,9 @@ button:hover{
 }
 /*format for the page heading*/
 .site-header{
+    position: sticky;   /* stay in view while scrolling */
+    top: 0;
+    z-index: 10;        /* sit above the rest of the page */
     background-color: var(--road-colour);
     height: fit-content;
     width: auto;
