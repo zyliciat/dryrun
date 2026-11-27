@@ -366,8 +366,3 @@ function update_settings(event){
 fill_settings();
 document.getElementById("settings_form").addEventListener("submit", update_settings);
 main_forecast();
-
-//TODO: park sorting function
-    //get sorting metric
-    //based on list
-    //return sorted list to html for sorting
