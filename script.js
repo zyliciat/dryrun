@@ -316,7 +316,8 @@ async function main_forecast(){
     results.textContent = "Loading...";
 
     try {
-        const [rainfall, forecast, haze, uv, wbgt] = await Promise.all([
+        //allSettled waits for every call, even if some of them fail
+        const responses = await Promise.allSettled([
             get_rainfall(),
             get_forecast(),
             get_haze(),
@@ -324,13 +325,21 @@ async function main_forecast(){
             get_wbgt()
         ]);
 
+        //only give up if there is nothing at all to show
+        if (responses.every((response) => response.status === "rejected")){
+            throw new Error("All API calls failed");
+        }
+
+        //a failed call has no value, so its readings are treated as missing
+        const [rainfall, forecast, haze, uv, wbgt] = responses.map((response) => response.value);
+
         const parks = park_list.map((park) => ({
             name: park.name,
-            rainfall: rainfall[park.name],
-            forecast: forecast[park.name],
-            haze: haze[park.name],
-            uv: uv,
-            wbgt: wbgt[park.name]
+            rainfall: rainfall?.[park.name] ?? "no reading",
+            forecast: forecast?.[park.name] ?? "no reading",
+            haze: haze?.[park.name] ?? "no reading",
+            uv: uv ?? "no reading",
+            wbgt: wbgt?.[park.name] ?? { value: NaN }
         }));
 
         latest_parks = parks;

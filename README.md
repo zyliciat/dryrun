@@ -78,7 +78,7 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 |----------|----------|---------|
 | Data | Store all parks in one list with area, region and coordinates | Each API identifies location differently. A new park only needs one new entry. |
 | Data | Use the nearest station for rainfall and WBGT, area for forecast and region for PSI | Matches how each dataset is reported. Nearest means straight-line distance from the park's midpoint, which may not represent a long route. UV is one value for all of Singapore, so it does not help compare parks. |
-| API handling | Call all five APIs together using `Promise.all` | Faster than calling them one by one. The trade-off is that if one fails, no cards are shown, only an error message. |
+| API handling | Call all five APIs together using `Promise.allSettled` | Faster than calling them one by one. If some fail, the cards still show the other readings and the failed ones are treated as missing. An error message is shown only if all five fail. |
 | API handling | Wait 5 seconds and retry up to 3 times on "too many requests" (429) | Handles rate limits without the user having to reload. Other errors are not retried. |
 | Classification | Give each park the worst category that any reading reaches | One serious hazard should not be hidden by other good readings. |
 | Classification | Classify a park no better than "OK" if any reading is missing, and name the missing reading as the issue | A park is not shown as "Good" without all the information. Applies to forecast, rainfall, PSI, UV and WBGT. If another reading puts the park in a worse category, the issue line names that cause instead, and the card shows "no reading" for the missing one. |
@@ -95,8 +95,8 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 |----------|------------|
 | Weather should show when the page opens | Readings first loaded only after clicking a button. The code now fetches them as soon as the page opens. |
 | Weather should still load if the API is busy ("too many requests") | The code waits 5 seconds and tries again, up to 3 times. |
-| Cards should only show after all data has arrived (`async`/`await`) | The page shows "Loading..." while `Promise.all` waits for all five API calls, then builds the cards. |
-| Errors from API calls should be caught (`try...catch`) | A failed request is logged to the console and passed on to the main function, which shows "Couldn't get the weather. Please try again." |
+| Cards should only show after all data has arrived (`async`/`await`) | The page shows "Loading..." while `Promise.allSettled` waits for all five API calls, then builds the cards. |
+| Errors from API calls should be caught (`try...catch`) | A failed request is logged to the console and its readings are treated as missing. If all five fail, the page shows "Couldn't get the weather. Please try again." |
 | A park with a missing reading should not be rated "Good" | The code rates the park "OK" or worse and shows "no reading" on the card. This covers forecast, rainfall, PSI, UV and WBGT. |
 | An empty response from an API should not stop the cards from showing | The affected readings are treated as missing instead of causing an error. |
 | User should know why a park is not rated "Good" | Each of these cards has an "Issue" line naming the cause, such as UV or rainfall. |
