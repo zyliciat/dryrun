@@ -404,6 +404,15 @@ function move_logo(){
     const y = -Math.abs(Math.sin(window.scrollY / 35)) * 3;
 
     logo.style.transform = `translate(${x}px, ${y}px)`;
+
+    //switch to the dark header when the page is scrolled to the end
+    const at_end = progress > 0.98;
+    header.classList.toggle("night", at_end);
+
+    const file = at_end ? "assets/dryrun-logo-dark.png" : "assets/dryrun-logo-light.png";
+    if (logo.getAttribute("src") !== file){
+        logo.setAttribute("src", file);
+    }
 }
 
 window.addEventListener("scroll", move_logo);

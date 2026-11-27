@@ -78,6 +78,15 @@ button:hover{
 
 }
 
+/*darker header at the end of the page*/
+.site-header{
+    transition: background-color 0.4s ease;   /* fade between colours */
+}
+
+.site-header.night{
+    background-color: #2B2D2F;
+}
+
 /*formatting of the logo*/
 .logo{
     height: 10vh;
