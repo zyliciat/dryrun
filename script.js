@@ -62,6 +62,12 @@ const limits = {
     rain: { ok: null, notGood: 0.1,  bad: null }
 };
 
+//use the saved settings if there are any
+const saved_limits = JSON.parse(localStorage.getItem("limits"));
+if (saved_limits){
+    Object.assign(limits, saved_limits);
+}
+
 let latest_parks = []; //kept so we can redraw without calling the APIs again
 
 //helper functions
@@ -365,6 +371,7 @@ function update_settings(event){
     }
 
     Object.assign(limits, entered);
+    localStorage.setItem("limits", JSON.stringify(limits)); //keep for next time
     message.textContent = "Settings updated.";
 
     //if the weather never loaded, try again
@@ -406,4 +413,10 @@ window.addEventListener("load", move_logo); //once the logo image has a width
 //set up the settings form and load the forecast when the page loads
 fill_settings();
 document.getElementById("settings_form").addEventListener("submit", update_settings);
+
+//forget the saved settings and reload to get the defaults back
+document.getElementById("reset_button").addEventListener("click", () => {
+    localStorage.removeItem("limits");
+    location.reload();
+});
 main_forecast();

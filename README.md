@@ -1,5 +1,7 @@
 # dryrun
 
+
+
 FOR each park:
     // BAD: don't run
     IF forecast contains "Thundery"       -> bad
