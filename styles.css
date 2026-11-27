@@ -10,6 +10,10 @@
   --colour-2: #ECB100;
   --colour-3: #FFFFFF;
   --road-colour: #6B6E70;
+  --status-good: #4F7D5A;      /* muted green */
+  --status-ok: #4A6F8F;        /* muted blue */
+  --status-not-good: #A8861D;  /* muted yellow */
+  --status-bad: #A64B4B;       /* muted red */
 }
 
 /*default body styling*/
@@ -40,6 +44,7 @@ h3{
 .caption{
     font-size: 12px;
     font-weight:normal;
+    padding: 0 40px;     /* line up with the cards */
 }
 
 /*button styling definition*/
@@ -119,18 +124,47 @@ button:hover{
         padding: 60px 20px;       /* breathing room around the block */
 }
 
+/*settings table*/
+.query table{
+    border-spacing: 8px;
+}
+
+.query td input{
+    width: 90px;
+    padding: 6px;
+    font: inherit;
+}
+
 /*park result cards*/
 .response{
+    text-align: left;
+    padding: 0 40px 40px;     /* same side spacing as the intro */
+}
+
+/*one row of cards for each status*/
+.status-row{
     display: flex;
-    flex-wrap: wrap;          /* move cards to the next row when full */
-    justify-content: center;
+    flex-wrap: wrap;          /* wrap onto another line on narrow screens */
+    justify-content: flex-start;  /* line cards up from the left */
     gap: 20px;
-    padding: 0 20px 40px;
 }
 
 .park-card{
     width: 260px;
+    text-align: left;
     padding: 20px;
     border-radius: 20px;
     background-color: var(--background-3);
+    border: 4px solid var(--status-colour);
+}
+
+/*each status sets its own colour*/
+.status-good{ --status-colour: var(--status-good); }
+.status-ok{ --status-colour: var(--status-ok); }
+.status-not-good{ --status-colour: var(--status-not-good); }
+.status-bad{ --status-colour: var(--status-bad); }
+
+/*colour the status headings*/
+.response > h3{
+    color: var(--status-colour);
 }

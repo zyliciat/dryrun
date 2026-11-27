@@ -54,7 +54,30 @@ const park_list = [
 
 const base_url = "https://api-open.data.gov.sg/v2/real-time/api";
 
+//the value where each category starts (null means not used)
+const limits = {
+    psi:  { ok: 51,   notGood: null, bad: 101 },
+    uv:   { ok: 6,    notGood: 8,    bad: null },
+    wbgt: { ok: 30,   notGood: 31,   bad: 33 },
+    rain: { ok: null, notGood: 0.1,  bad: null }
+};
+
+let latest_parks = []; //kept so we can redraw without calling the APIs again
+
 //helper functions
+
+//true if a limit is set and the value has reached it
+function reaches(value, limit){
+    return limit !== null && value >= limit;
+}
+
+//true if any metric has reached its limit for this level
+function any_reaches(park, level){
+    return reaches(park.haze, limits.psi[level])
+        || reaches(park.uv, limits.uv[level])
+        || reaches(park.wbgt.value, limits.wbgt[level])
+        || reaches(park.rainfall, limits.rain[level]);
+}
 
 //find the id of the station nearest to a park
 function get_deviceid(park, stations){
@@ -163,31 +186,101 @@ async function get_wbgt(){
     for (const park of park_list){
         const device_id = get_deviceid(park, stations);
         const reading = readings.find((r) => r.station.id === device_id);
-        output[park.name] = `${reading.wbgt}°C (${reading.heatStress} heat stress)`;
+        output[park.name] = {
+            value: Number(reading.wbgt), //the API sends text, so convert to a number
+            stress: reading.heatStress
+        };
     }
     return output;
 }
 
-//display one card per park
+//classify a park for running: check the worst level first
+function classify_park(park){
+    const forecast = park.forecast.toLowerCase();
+
+    //bad: don't run
+    if (forecast.includes("thundery") || forecast.includes("heavy") || any_reaches(park, "bad")){
+        return "bad";
+    }
+
+    //not good: think twice
+    if (forecast.includes("rain") || forecast.includes("showers") || any_reaches(park, "notGood")){
+        return "not good";
+    }
+
+    //ok: fine to run, minor care needed
+    if (any_reaches(park, "ok")){
+        return "ok";
+    }
+
+    return "good";
+}
+
+//choose a weather icon from the forecast text
+function get_icon(forecast){
+    const text = forecast.toLowerCase();
+
+    if (text.includes("thundery")) return "⛈️";
+    if (text.includes("rain") || text.includes("showers") || text.includes("drizzle")) return "🌧️";
+    if (text.includes("partly cloudy")) return "⛅";
+    if (text.includes("cloudy")) return "☁️";
+    if (text.includes("fair")) return text.includes("night") ? "🌙" : "☀️";
+
+    return "🌡️"; //anything not matched above
+}
+
+//turn a status into a CSS class name (class names can't contain spaces)
+function status_class(status){
+    return "status-" + status.replace(" ", "-");
+}
+
+//display one row of cards per status, from best to worst
 function display_parks(parks){
     const results = document.getElementById("results");
     results.innerHTML = "";
 
-    for (const park of parks){
-        const rainfall = typeof park.rainfall === "number" ? `${park.rainfall} mm` : park.rainfall;
+    for (const status of ["good", "ok", "not good", "bad"]){
+        const matches = parks.filter((park) => classify_park(park) === status);
 
-        const card = document.createElement("div");
-        card.className = "park-card";
-        card.innerHTML = `
-            <h3>${park.name}</h3>
-            <p>Rainfall: ${rainfall}</p>
-            <p>Forecast: ${park.forecast}</p>
-            <p>PSI (24h): ${park.haze}</p>
-            <p>UV index: ${park.uv}</p>
-            <p>WBGT: ${park.wbgt}</p>
-        `;
-        results.appendChild(card);
+        //skip a status that has no parks
+        if (matches.length === 0){
+            continue;
+        }
+
+        const heading = document.createElement("h3");
+        heading.textContent = status.toUpperCase();
+        heading.className = status_class(status);
+        results.appendChild(heading);
+
+        const row = document.createElement("div");
+        row.className = "status-row";
+        results.appendChild(row);
+
+        for (const park of matches){
+            row.appendChild(create_card(park));
+        }
     }
+}
+
+//build the card for one park
+function create_card(park){
+    const rainfall = typeof park.rainfall === "number" ? `${park.rainfall} mm` : park.rainfall;
+
+    const card = document.createElement("div");
+    const status = classify_park(park);
+
+    card.className = `park-card ${status_class(status)}`;
+    card.innerHTML = `
+        <h3>${get_icon(park.forecast)} ${park.name}</h3>
+        <p>Status: ${status}</p>
+        <p>Rainfall: ${rainfall}</p>
+        <p>Forecast: ${park.forecast}</p>
+        <p>PSI (24h): ${park.haze}</p>
+        <p>UV index: ${park.uv}</p>
+        <p>WBGT: ${park.wbgt.value}°C (${park.wbgt.stress} heat stress)</p>
+    `;
+
+    return card;
 }
 
 //fetch all the metrics, combine them per park and display
@@ -213,18 +306,66 @@ async function main_forecast(){
             wbgt: wbgt[park.name]
         }));
 
+        latest_parks = parks;
         display_parks(parks);
+
+        //show when the readings were fetched, in Singapore time
+        document.getElementById("last_updated").textContent = new Date().toLocaleString("en-SG", {
+            dateStyle: "medium",
+            timeStyle: "short",
+            timeZone: "Asia/Singapore"
+        });
     } catch (error) {
         console.error(error);
         results.textContent = "Couldn't get the weather. Please try again.";
     }
 }
 
-//load the forecast when the page loads, and refresh it on button click
-main_forecast();
-document.getElementById("run_button").addEventListener("click", main_forecast);
+//show the current limits in the input boxes
+function fill_settings(){
+    for (const metric in limits){
+        for (const level in limits[metric]){
+            document.getElementById(`${metric}_${level}`).value = limits[metric][level] ?? "";
+        }
+    }
+}
 
-//TODO: choose a weather icon for each park
+//read the input boxes, save the new limits and redraw the cards
+function update_settings(event){
+    event.preventDefault(); //stop the form from reloading the page
+    const message = document.getElementById("settings_message");
+    const entered = {};
+
+    for (const metric in limits){
+        entered[metric] = {};
+        for (const level in limits[metric]){
+            const text = document.getElementById(`${metric}_${level}`).value;
+            entered[metric][level] = text === "" ? null : Number(text);
+        }
+
+        //the filled boxes must go up from OK to Bad
+        const filled = Object.values(entered[metric]).filter((value) => value !== null);
+        if (filled.some((value, i) => i > 0 && value <= filled[i - 1])){
+            message.textContent = "Not saved: in each row, values must increase from OK to Bad.";
+            return;
+        }
+    }
+
+    Object.assign(limits, entered);
+    message.textContent = "Settings updated.";
+
+    //if the weather never loaded, try again
+    if (latest_parks.length === 0){
+        main_forecast();
+    } else {
+        display_parks(latest_parks);
+    }
+}
+
+//set up the settings form and load the forecast when the page loads
+fill_settings();
+document.getElementById("settings_form").addEventListener("submit", update_settings);
+main_forecast();
 
 //TODO: park sorting function
     //get sorting metric

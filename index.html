@@ -23,11 +23,53 @@
     </section>
 
     <section class = "query">
-        <h3>Singapore’s weather has a mind of its own, don’t let it rain on your parade</h3>
-        <button id = run_button>Let's go for a run</button>
+        <h3>Singapore’s weather has a mind of its own, don’t let it rain on your parade.</h3>
+        <form id="settings_form">
+            <p>Set the value where each category starts. Leave a box empty to skip it.</p>
+            <table>
+                <tr>
+                    <th></th>
+                    <th scope="col">OK from</th>
+                    <th scope="col">Not good from</th>
+                    <th scope="col">Bad from</th>
+                </tr>
+                <tr>
+                    <th scope="row">PSI (24h)</th>
+                    <td><input type="number" step="any" min="0" id="psi_ok" aria-label="PSI (24h): OK from"></td>
+                    <td><input type="number" step="any" min="0" id="psi_notGood" aria-label="PSI (24h): Not good from"></td>
+                    <td><input type="number" step="any" min="0" id="psi_bad" aria-label="PSI (24h): Bad from"></td>
+                </tr>
+                <tr>
+                    <th scope="row">UV index</th>
+                    <td><input type="number" step="any" min="0" id="uv_ok" aria-label="UV index: OK from"></td>
+                    <td><input type="number" step="any" min="0" id="uv_notGood" aria-label="UV index: Not good from"></td>
+                    <td><input type="number" step="any" min="0" id="uv_bad" aria-label="UV index: Bad from"></td>
+                </tr>
+                <tr>
+                    <th scope="row">WBGT (°C)</th>
+                    <td><input type="number" step="any" min="0" id="wbgt_ok" aria-label="WBGT (°C): OK from"></td>
+                    <td><input type="number" step="any" min="0" id="wbgt_notGood" aria-label="WBGT (°C): Not good from"></td>
+                    <td><input type="number" step="any" min="0" id="wbgt_bad" aria-label="WBGT (°C): Bad from"></td>
+                </tr>
+                <tr>
+                    <th scope="row">Rainfall (mm in 5 min)</th>
+                    <td><input type="number" step="any" min="0" id="rain_ok" aria-label="Rainfall (mm in 5 min): OK from"></td>
+                    <td><input type="number" step="any" min="0" id="rain_notGood" aria-label="Rainfall (mm in 5 min): Not good from"></td>
+                    <td><input type="number" step="any" min="0" id="rain_bad" aria-label="Rainfall (mm in 5 min): Bad from"></td>
+                </tr>
+            </table>
+            <p id="settings_message" role="status"></p>
+            <button type="submit">Update settings</button>
+        </form>
     </section>
 
     <section class="response" id="results"></section>
+
+    <p class="caption">
+        Page last refreshed: <span id="last_updated">not yet loaded</span>.
+        Readings are the latest available from NEA via data.gov.sg when the page loaded.
+        How often they update varies by metric.
+    </p>
     <script src="script.js"></script>
 </body>
 </html>
