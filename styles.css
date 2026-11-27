@@ -117,8 +117,8 @@ button:hover{
     min-width: 0;       /* allow it to shrink below its content */
 }
 
-/*query block formatting and alignments*/
-.query{
+/*settings block formatting and alignments*/
+.settings{
         display: flex;
         flex-direction: column;   /* stack heading above button */
         align-items: center;      /* centre them horizontally */
@@ -128,11 +128,11 @@ button:hover{
 }
 
 /*settings table*/
-.query table{
+.settings table{
     border-spacing: 8px;
 }
 
-.query td input{
+.settings td input{
     width: 90px;
     padding: 6px;
     font: inherit;
