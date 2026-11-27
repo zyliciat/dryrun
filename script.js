@@ -71,14 +71,6 @@ function reaches(value, limit){
     return limit !== null && value >= limit;
 }
 
-//true if any metric has reached its limit for this level
-function any_reaches(park, level){
-    return reaches(park.haze, limits.psi[level])
-        || reaches(park.uv, limits.uv[level])
-        || reaches(park.wbgt.value, limits.wbgt[level])
-        || reaches(park.rainfall, limits.rain[level]);
-}
-
 //find the id of the station nearest to a park
 function get_deviceid(park, stations){
     let nearest = null;
@@ -194,29 +186,36 @@ async function get_wbgt(){
     return output;
 }
 
+//list what is wrong with a park at one level: "bad", "notGood" or "ok"
+function get_issues(park, level){
+    const forecast = park.forecast.toLowerCase();
+    const issues = [];
+
+    if (level === "bad" && (forecast.includes("thundery") || forecast.includes("heavy"))){
+        issues.push("thundery or heavy rain forecast");
+    }
+    if (level === "notGood" && (forecast.includes("rain") || forecast.includes("showers"))){
+        issues.push("rain forecast");
+    }
+
+    if (reaches(park.rainfall, limits.rain[level])) issues.push("rainfall");
+    if (reaches(park.haze, limits.psi[level])) issues.push("haze (PSI)");
+    if (reaches(park.uv, limits.uv[level])) issues.push("UV");
+    if (reaches(park.wbgt.value, limits.wbgt[level])) issues.push("heat (WBGT)");
+
+    //don't call a park good or ok if a reading is missing
+    if (level === "notGood" && (park.rainfall === "no reading" || park.forecast === "no reading")){
+        issues.push("missing reading");
+    }
+
+    return issues;
+}
+
 //classify a park for running: check the worst level first
 function classify_park(park){
-    const forecast = park.forecast.toLowerCase();
-
-    //bad: don't run
-    if (forecast.includes("thundery") || forecast.includes("heavy") || any_reaches(park, "bad")){
-        return "bad";
-    }
-
-    //not good: think twice
-    if (forecast.includes("rain") || forecast.includes("showers") || any_reaches(park, "notGood")){
-        return "not good";
-    }
-
-    //ok: fine to run, minor care needed
-    if (any_reaches(park, "ok")){
-        return "ok";
-    }
-
-    //don't call a park good if a reading is missing
-    if (park.rainfall === "no reading" || park.forecast === "no reading"){
-        return "not good";
-    }
+    if (get_issues(park, "bad").length > 0) return "bad";             //don't run
+    if (get_issues(park, "notGood").length > 0) return "not good";    //think twice
+    if (get_issues(park, "ok").length > 0) return "ok";               //minor care needed
 
     return "good";
 }
@@ -247,11 +246,6 @@ function display_parks(parks){
     for (const status of ["good", "ok", "not good", "bad"]){
         const matches = parks.filter((park) => classify_park(park) === status);
 
-        //skip a status that has no parks
-        if (matches.length === 0){
-            continue;
-        }
-
         const heading = document.createElement("h3");
         heading.textContent = status.toUpperCase();
         heading.className = status_class(status);
@@ -264,6 +258,14 @@ function display_parks(parks){
         for (const park of matches){
             row.appendChild(create_card(park));
         }
+
+        //placeholder when no parks are in this category
+        if (matches.length === 0){
+            const placeholder = document.createElement("p");
+            placeholder.className = "placeholder";
+            placeholder.textContent = "No parks in this category right now.";
+            row.appendChild(placeholder);
+        }
     }
 }
 
@@ -275,11 +277,17 @@ function create_card(park){
     const status = classify_park(park);
 
     card.className = `park-card ${status_class(status)}`;
+
+    //say what caused the status (good parks have nothing to flag)
+    const level = status === "not good" ? "notGood" : status;
+    const issues = status === "good" ? "" : `<p class="card-issue"><strong>Issue:</strong> ${get_issues(park, level).join(", ")}</p>`;
+
     card.innerHTML = `
         <h3>${get_icon(park.forecast)} ${park.name}</h3>
-        <p>Status: ${status}</p>
-        <p>Rainfall: ${rainfall}</p>
+        <p class="card-status">Status: ${status.toUpperCase()}</p>
+        ${issues}
         <p>Forecast: ${park.forecast}</p>
+        <p>Rainfall: ${rainfall}</p>
         <p>PSI (24h): ${park.haze}</p>
         <p>UV index: ${park.uv}</p>
         <p>WBGT: ${park.wbgt.value}°C (${park.wbgt.stress} heat stress)</p>

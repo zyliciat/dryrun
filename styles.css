@@ -138,6 +138,12 @@ button:hover{
     font: inherit;
 }
 
+/*caption explaining the categories*/
+.category-caption{
+    align-self: flex-start;  /* move to the left of the centred section */
+    text-align: left;
+}
+
 /*heading above the results*/
 .section-title{
     padding: 0 40px;     /* line up with the cards */
@@ -164,6 +170,16 @@ button:hover{
     border-radius: 20px;
     background-color: var(--background-3);
     border: 4px solid var(--status-colour);
+}
+
+/*status line in the same colour as the card border*/
+.card-status{
+    color: var(--status-colour);
+    font-weight: bold;
+}
+
+.card-issue{
+    color: var(--status-colour);
 }
 
 /*each status sets its own colour*/
