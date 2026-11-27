@@ -1,5 +1,5 @@
 # dryrun
-Alicia Teo | github pages url: https://zyliciat.github.io/dryrun/
+Alicia Teo | [github repo README link](https://github.com/zyliciat/dryrun/blob/main/README.md) | [github pages url](https://zyliciat.github.io/dryrun/)
 
 ### Contents
 1. [Overview](#1-overview)
@@ -21,6 +21,11 @@ I created this website for
 2. but also wanted to create an website that I myself could use when going for runs, to check weather conditions for the particular area I'm running consolidating the stats that I want to see. 
 
 **Target Audience:** runners or park users in general 
+
+**Theme:** 
+Encourage and enable healthy lifestyle by removing barriers to regular exercise and helping to make it easier for people to plan their exercise. As the weather would impact outdoor activity plans such as avoiding outdoor activities when it is rainy season, a heatwave or hazy. 
+
+(Sources: [Straits times: People adjusting their outdoor activities when there is heat](https://www.straitstimes.com/singapore/environment/want-to-be-heat-resilient-short-bouts-of-exercise-outdoors-could-be-more-helpful-than-blasting-the?ref=inline-article), [CNA: adjusting outdoor activities with haze](https://www.youtube.com/watch?v=sJFtb3OONxo))
 
 ## 2: Design Process
 ### Some user stories
