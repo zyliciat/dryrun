@@ -61,6 +61,17 @@ Figma wireframe design process: https://www.figma.com/design/Tfalmy9SYrz2bxKi7cQ
 - **google fonts** for import of the host grotesk font
 - **github** for CI/CD and website deployment to github pages
 
+### API End points used
+Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
+
+| API | Endpoint (GET) | Data used | Matched to park by |
+|---|---|---|---|
+| Rainfall | `/rainfall` | Latest rainfall reading | Nearest station |
+| 2-hour weather forecast | `/two-hr-forecast` | Forecast text, including thunder and rain | Park's area |
+| PSI | `/psi` | 24-hour PSI (haze) | Park's region |
+| UV index | `/uv` | Latest UV index | Same value for all of Singapore |
+| WBGT | `/weather?api=wbgt` | WBGT value and heat stress level | Nearest station |
+
 ### Technical Decisions
 
 | Category | Decision | Remarks |
