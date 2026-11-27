@@ -1,8 +1,8 @@
 # dryrun
-Done by: Alicia Teo 
-github pages: https://zyliciat.github.io/dryrun/
+Alicia Teo | github pages: https://zyliciat.github.io/dryrun/
 
 ## 1: Overview
+
 
 ## 2: Design Process
 

@@ -294,7 +294,7 @@ function create_card(park){
         ${issues}
         <p>Forecast: ${park.forecast}</p>
         <p>Rainfall: ${rainfall}</p>
-        <p>PSI (24h): ${park.haze}</p>
+        <p>PSI (24h average): ${park.haze}</p>
         <p>UV index: ${park.uv}</p>
         <p>WBGT: ${park.wbgt.value}°C (${park.wbgt.stress} heat stress)</p>
     `;

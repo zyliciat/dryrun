@@ -34,10 +34,10 @@
                     <th scope="col">Bad from</th>
                 </tr>
                 <tr>
-                    <th scope="row">PSI (24h)</th>
-                    <td><input type="number" step="any" min="0" id="psi_ok" aria-label="PSI (24h): OK from"></td>
-                    <td><input type="number" step="any" min="0" id="psi_notGood" aria-label="PSI (24h): Not good from"></td>
-                    <td><input type="number" step="any" min="0" id="psi_bad" aria-label="PSI (24h): Bad from"></td>
+                    <th scope="row">PSI (24h average)</th>
+                    <td><input type="number" step="any" min="0" id="psi_ok" aria-label="PSI (24h average): OK from"></td>
+                    <td><input type="number" step="any" min="0" id="psi_notGood" aria-label="PSI (24h average): Not good from"></td>
+                    <td><input type="number" step="any" min="0" id="psi_bad" aria-label="PSI (24h average): Bad from"></td>
                 </tr>
                 <tr>
                     <th scope="row">UV index</th>
@@ -79,11 +79,20 @@
     <h2 class="section-title">Where to run?</h2>
     <section class="response" id="results"></section>
 
-    <p class="caption">
-        Page last refreshed: <span id="last_updated">not yet loaded</span>.
-        Readings are the latest available from NEA via data.gov.sg when the page loaded.
-        How often they update varies by metric.
-    </p>
+    <div class="caption">
+        <p>
+            Page last refreshed: <span id="last_updated">not yet loaded</span>.
+            Readings are the latest available from NEA via data.gov.sg when the page loaded.
+            NEA refreshes the various metrics according to the following frequencies:
+        </p>
+        <ul>
+            <li><strong>Rainfall:</strong> every 5 minutes</li>
+            <li><strong>Forecast (next 2 hours):</strong> every 30 minutes</li>
+            <li><strong>PSI (24h average):</strong> every hour</li>
+            <li><strong>UV index:</strong> every hour, from 7am to 7pm</li>
+            <li><strong>WBGT:</strong> every 15 minutes</li>
+        </ul>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
