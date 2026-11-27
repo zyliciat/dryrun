@@ -81,7 +81,7 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 | API handling | Call all five APIs together using `Promise.all` | Faster than calling them one by one. The trade-off is that if one fails, no cards are shown, only an error message. |
 | API handling | Wait 5 seconds and retry up to 3 times on "too many requests" (429) | Handles rate limits without the user having to reload. Other errors are not retried. |
 | Classification | Give each park the worst category that any reading reaches | One serious hazard should not be hidden by other good readings. |
-| Classification | Classify a park no better than "Not Good" if rainfall or forecast is missing | Avoids telling users it is fine to run without that information. This does not yet cover PSI, UV or WBGT. |
+| Classification | Classify a park no better than "OK" if any reading is missing, and name the missing reading as the issue | A park is not shown as "Good" without all the information. Applies to forecast, rainfall, PSI, UV and WBGT. If another reading puts the park in a worse category, the issue line names that cause instead, and the card shows "no reading" for the missing one. |
 | Classification | Show what caused the status on each card that is not "Good" | Helps users judge for themselves whether the issue matters to them. |
 | User settings | Save custom thresholds in local storage, with a reset button | Settings are kept between visits without needing accounts or a server, but only on that browser. |
 | User settings | Only save thresholds that increase from OK to Bad | Prevents settings that would not make sense. |
@@ -97,11 +97,11 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 | Weather should still load if the API is busy ("too many requests") | The code waits 5 seconds and tries again, up to 3 times. |
 | Cards should only show after all data has arrived (`async`/`await`) | The page shows "Loading..." while `Promise.all` waits for all five API calls, then builds the cards. |
 | Errors from API calls should be caught (`try...catch`) | A failed request is logged to the console and passed on to the main function, which shows "Couldn't get the weather. Please try again." |
-| A park with no rainfall or forecast reading should not look safe to run | The code rates the park "Not Good" or worse, even if its other readings are fine. |
+| A park with a missing reading should not be rated "Good" | The code rates the park "OK" or worse and shows "no reading" on the card. This covers forecast, rainfall, PSI, UV and WBGT. |
+| An empty response from an API should not stop the cards from showing | The affected readings are treated as missing instead of causing an error. |
 | User should know why a park is not rated "Good" | Each of these cards has an "Issue" line naming the cause, such as UV or rainfall. |
 | Thresholds entered in the wrong order should be rejected | Values must increase from OK to Bad. Otherwise nothing is saved and a message explains why. |
 | Custom thresholds should remain after reloading the page | They are saved in the browser's local storage. The reset button removes them and restores the defaults. |
-| A park with no PSI, UV or WBGT reading should not look safe to run | Open: only missing rainfall and forecast are checked. The same check is needed for these three readings. |
 | Page should fit a mobile screen | Open: the cards wrap, but the rest of the layout has not been adjusted for small screens. |
 
 ## 6: Credits

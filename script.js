@@ -93,12 +93,12 @@ function get_deviceid(park, stations){
         }
     }
 
-    return nearest.deviceId;
+    return nearest?.deviceId; //undefined if there are no stations
 }
 
 function get_reading(device_id, readings){
     const reading = readings.find((r) => r.stationId === device_id);
-    return reading ? reading.value : "no reading";
+    return reading?.value ?? "no reading";
 }
 
 //api call
@@ -130,8 +130,8 @@ async function api_call(endpoint, retries = 3) {
 async function get_rainfall(){
     const result = await api_call(`${base_url}/rainfall`);
 
-    const stations = result.data.stations;
-    const readings = result.data.readings[0].data;
+    const stations = result.data.stations ?? [];
+    const readings = result.data.readings[0]?.data ?? [];
 
     const output = {};
     for (const park of park_list){
@@ -144,12 +144,12 @@ async function get_rainfall(){
 //thunder: 2 hour forecast text for the park's area
 async function get_forecast(){
     const result = await api_call(`${base_url}/two-hr-forecast`);
-    const forecasts = result.data.items[0].forecasts;
+    const forecasts = result.data.items[0]?.forecasts ?? [];
 
     const output = {};
     for (const park of park_list){
         const match = forecasts.find((f) => f.area === park.area);
-        output[park.name] = match ? match.forecast : "no reading";
+        output[park.name] = match?.forecast || "no reading";
     }
     return output;
 }
@@ -157,11 +157,11 @@ async function get_forecast(){
 //haze: 24 hour PSI for the park's region
 async function get_haze(){
     const result = await api_call(`${base_url}/psi`);
-    const psi = result.data.items[0].readings.psi_twenty_four_hourly;
+    const psi = result.data.items[0]?.readings?.psi_twenty_four_hourly ?? {};
 
     const output = {};
     for (const park of park_list){
-        output[park.name] = psi[park.region];
+        output[park.name] = psi[park.region] ?? "no reading";
     }
     return output;
 }
@@ -169,13 +169,13 @@ async function get_haze(){
 //uv: one value for the whole of Singapore, latest hour first
 async function get_uv(){
     const result = await api_call(`${base_url}/uv`);
-    return result.data.records[0].index[0].value;
+    return result.data.records[0]?.index?.[0]?.value ?? "no reading";
 }
 
 //running index: WBGT (heat stress) from the nearest station
 async function get_wbgt(){
     const result = await api_call(`${base_url}/weather?api=wbgt`);
-    const readings = result.data.records[0].item.readings;
+    const readings = result.data.records[0]?.item?.readings ?? [];
 
     //reshape into the station format that get_deviceid expects
     const stations = readings.map((r) => ({ deviceId: r.station.id, location: r.location }));
@@ -185,8 +185,8 @@ async function get_wbgt(){
         const device_id = get_deviceid(park, stations);
         const reading = readings.find((r) => r.station.id === device_id);
         output[park.name] = {
-            value: Number(reading.wbgt), //the API sends text, so convert to a number
-            stress: reading.heatStress
+            value: parseFloat(reading?.wbgt), //the API sends text; empty becomes NaN, not 0
+            stress: reading?.heatStress
         };
     }
     return output;
@@ -209,9 +209,13 @@ function get_issues(park, level){
     if (reaches(park.uv, limits.uv[level])) issues.push("UV");
     if (reaches(park.wbgt.value, limits.wbgt[level])) issues.push("heat (WBGT)");
 
-    //don't call a park good or ok if a reading is missing
-    if (level === "notGood" && (park.rainfall === "no reading" || park.forecast === "no reading")){
-        issues.push("missing reading");
+    //a missing reading makes the park ok at best
+    if (level === "ok"){
+        if (park.forecast === "no reading") issues.push("no reading found for forecast");
+        if (!Number.isFinite(park.rainfall)) issues.push("no reading found for rainfall");
+        if (!Number.isFinite(park.haze)) issues.push("no reading found for PSI");
+        if (!Number.isFinite(park.uv)) issues.push("no reading found for UV");
+        if (!Number.isFinite(park.wbgt.value)) issues.push("no reading found for WBGT");
     }
 
     return issues;
@@ -279,6 +283,10 @@ function display_parks(parks){
 function create_card(park){
     const rainfall = typeof park.rainfall === "number" ? `${park.rainfall} mm` : park.rainfall;
 
+    const wbgt = Number.isFinite(park.wbgt.value)
+        ? `${park.wbgt.value}°C (${park.wbgt.stress ?? "unknown"} heat stress)`
+        : "no reading";
+
     const card = document.createElement("div");
     const status = classify_park(park);
 
@@ -296,7 +304,7 @@ function create_card(park){
         <p>Rainfall: ${rainfall}</p>
         <p>PSI (24h average): ${park.haze}</p>
         <p>UV index: ${park.uv}</p>
-        <p>WBGT: ${park.wbgt.value}°C (${park.wbgt.stress} heat stress)</p>
+        <p>WBGT: ${wbgt}</p>
     `;
 
     return card;
