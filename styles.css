@@ -1,0 +1,120 @@
+/*import the host grotesk font*/
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;700&display=swap');
+
+/*colour scheme definition*/
+:root {
+  --background-1: #FBFAF1;
+  --background-2: #E5C655;
+  --background-3: #E1DFCB;
+  --colour-1: #000000;
+  --colour-2: #ECB100;
+  --colour-3: #FFFFFF;
+  --road-colour: #6B6E70;
+}
+
+/*default body styling*/
+body{
+    background-color: var(--background-1);
+    color: var(--colour-1);
+    font-family: "Host Grotesk";
+    font-size: 16px;
+    font-weight:normal;
+}
+
+/*font definitions*/
+h1{
+    font-size: 60px;
+    font-weight:bold;
+}
+
+h2{
+    font-size: 40px;
+    font-weight:bold;
+}
+
+h3{
+    font-size: 28px;
+    font-weight:bolder;
+}
+
+.caption{
+    font-size: 12px;
+    font-weight:normal;
+}
+
+/*button styling definition*/
+button{
+    position: relative; /*so that the button position is used to position the arrow*/
+    width: 100%;
+    max-width: 350px;
+    padding: 10px 40px;
+    border-radius: 20px;
+    background-color: var(--colour-2);
+    font: inherit;
+    font-size:20px;
+    color:var(--colour-1);
+    transition: background-color 0.3s ease;
+}
+
+/*button hover styling definition*/
+button:hover{
+    background-color: var(--colour-1);
+    color: var(--colour-2);
+}
+/*format for the page heading*/
+.site-header{
+    background-color: var(--road-colour);
+    height: fit-content;
+    width: auto;
+    height: 10vh;      /* 10% of the window height */
+
+}
+
+/*formatting of the logo*/
+.logo{
+    height: 10vh;
+    width: auto;
+    display: block;    
+    margin: auto auto; 
+    /* centralising 0 margin for top and bottom, and auto for left right*/
+}
+
+/*formatting of the yellow splash paint as the background of the div*/
+.sunnyday-art{
+    background-image: url("assets/yellow-paint-splash.png");
+    background-repeat: no-repeat;   /* show it only once */
+    background-position: center;    /* put it in the middle of the box */
+    background-size: contain;       /* scale it to fit inside the box */
+}
+/*formatting of the graphic image itself on top of the div*/
+.sunnyday-art img{
+    width: 100%;        /* fit the box it's in */
+    max-width: 600px;   /* don't get too big on wide screens */
+    height: auto;       /* keep proportions */
+    display: block;
+    margin: 0 auto;
+}
+
+/*introduction block formatting and alignments*/
+.intro{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding:40px;
+    gap:40px;
+}
+
+.intro > div{
+    flex: 1;
+    min-width: 0;       /* allow it to shrink below its content */
+}
+
+/*query block formatting and alignments*/
+.query{
+        display: flex;
+        flex-direction: column;   /* stack heading above button */
+        align-items: center;      /* centre them horizontally */
+        text-align: center;       /* centre the text when it wraps */
+        gap: 0px;                /* space between them */
+        padding: 60px 20px;       /* breathing room around the block */
+}
