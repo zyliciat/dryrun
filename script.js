@@ -214,6 +214,8 @@ async function main_forecast(){
     }
 }
 
+//load the forecast when the page loads, and refresh it on button click
+main_forecast();
 document.getElementById("run_button").addEventListener("click", main_forecast);
 
 //TODO: choose a weather icon for each park
