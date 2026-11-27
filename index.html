@@ -57,6 +57,13 @@
                     <td><input type="number" step="any" min="0" id="rain_notGood" aria-label="Rainfall (mm in 5 min): Not good from"></td>
                     <td><input type="number" step="any" min="0" id="rain_bad" aria-label="Rainfall (mm in 5 min): Bad from"></td>
                 </tr>
+                <!-- fixed rules, so plain text instead of input boxes -->
+                <tr>
+                    <th scope="row">Forecast</th>
+                    <td>Drizzle</td>
+                    <td>Rain or showers</td>
+                    <td>Thundery or heavy</td>
+                </tr>
             </table>
             <p id="settings_message" role="status"></p>
             <button type="submit">Update Settings</button>
@@ -72,7 +79,6 @@
             </ul>
             <p>
                 A park takes the worst category that any of its readings reaches.
-                Rain or showers in the forecast counts as Not good, and thundery or heavy as Bad.
                 A park with a missing reading is rated OK at best.
             </p>
         </div>

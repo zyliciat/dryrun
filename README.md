@@ -48,7 +48,7 @@ Figma wireframe design process: https://www.figma.com/design/Tfalmy9SYrz2bxKi7cQ
 ## 3: Features
 1. Upon page load/reload, the site pulls for each park the corresponding latest information for the various metrics and consolidates it to be shown on a card.
 2. The cards for each park's weather information is classified based on Good, OK, Not Good or Bad, based on certain thresholds. 
-3. On first page load, it is classified based on a default setting. However, the user can choose to change the threshold settings to reflect their comfort level and the classifications will be reflected accordingly.
+3. On first page load, it is classified based on a default setting. However, the user can choose to change the threshold settings to reflect their comfort level and the classifications will be reflected accordingly. The forecast rules are fixed: they are shown in the same table but cannot be edited.
 
 ## 4: Technologies Used & Technical Decisions
 
@@ -82,6 +82,7 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 | API handling | Wait 5 seconds and retry up to 3 times on "too many requests" (429) | Handles rate limits without the user having to reload. Other errors are not retried. |
 | Classification | Give each park the worst category that any reading reaches | One serious hazard should not be hidden by other good readings. |
 | Classification | Classify a park no better than "OK" if any reading is missing, and name the missing reading as the issue | A park is not shown as "Good" without all the information. Applies to forecast, rainfall, PSI, UV and WBGT. If another reading puts the park in a worse category, the issue line names that cause instead, and the card shows "no reading" for the missing one. |
+| Classification | Use fixed forecast rules: drizzle is "OK", rain or showers is "Not Good", and thundery or heavy is "Bad" | These are non-negotiable, so users cannot edit them: thunder should never be set as OK to run in. The forecast is checked separately from the measured rainfall, and the park takes the worse of the two. |
 | Classification | Show what caused the status on each card that is not "Good" | Helps users judge for themselves whether the issue matters to them. |
 | User settings | Save custom thresholds in local storage, with a reset button | Settings are kept between visits without needing accounts or a server, but only on that browser. |
 | User settings | Only save thresholds that increase from OK to Bad | Prevents settings that would not make sense. |
@@ -99,6 +100,7 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 | Errors from API calls should be caught (`try...catch`) | A failed request is logged to the console and its readings are treated as missing. If all five fail, the page shows "Couldn't get the weather. Please try again." |
 | A park with a missing reading should not be rated "Good" | The code rates the park "OK" or worse and shows "no reading" on the card. This covers forecast, rainfall, PSI, UV and WBGT. |
 | An empty response from an API should not stop the cards from showing | The affected readings are treated as missing instead of causing an error. |
+| A park with drizzle forecast should not be rated "Good" | The code rates the park "OK" or worse and shows "drizzle forecast" as the issue when "OK" is its category. |
 | User should know why a park is not rated "Good" | Each of these cards has an "Issue" line naming the cause, such as UV or rainfall. |
 | Thresholds entered in the wrong order should be rejected | Values must increase from OK to Bad. Otherwise nothing is saved and a message explains why. |
 | Custom thresholds should remain after reloading the page | They are saved in the browser's local storage. The reset button removes them and restores the defaults. |

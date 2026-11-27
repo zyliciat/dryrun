@@ -203,6 +203,9 @@ function get_issues(park, level){
     if (level === "notGood" && (forecast.includes("rain") || forecast.includes("showers"))){
         issues.push("rain forecast");
     }
+    if (level === "ok" && forecast.includes("drizzle")){
+        issues.push("drizzle forecast");
+    }
 
     if (reaches(park.rainfall, limits.rain[level])) issues.push("rainfall");
     if (reaches(park.haze, limits.psi[level])) issues.push("haze (PSI)");
