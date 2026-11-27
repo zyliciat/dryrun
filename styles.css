@@ -9,7 +9,7 @@
   --colour-1: #000000;
   --colour-2: #ECB100;
   --colour-3: #FFFFFF;
-  --road-colour: #6B6E70;
+  --road-colour: #a3a3a3;
   --status-good: #4F7D5A;      /* muted green */
   --status-ok: #4A6F8F;        /* muted blue */
   --status-not-good: #A8861D;  /* muted yellow */
@@ -134,6 +134,11 @@ button:hover{
         text-align: center;       /* centre the text when it wraps */
         gap: 0px;                /* space between them */
         padding: 60px 20px;       /* breathing room around the block */
+}
+
+/*space between the two settings buttons*/
+#reset_button{
+    margin-top: 12px;
 }
 
 /*settings table*/

@@ -1,8 +1,19 @@
 # dryrun
+Done by: Alicia Teo 
+github pages: https://zyliciat.github.io/dryrun/
 
-## Overview
+## 1: Overview
 
-## Design Process
+## 2: Design Process
+
+## 3: Features
+
+## 4: Technologies Used
+
+## 5: Testing
+
+## 6: Credits
+
 any wireframes or 
 
 FOR each park:
