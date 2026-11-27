@@ -11,7 +11,7 @@ Alicia Teo | [github repo README link](https://github.com/zyliciat/dryrun/blob/m
 
 ## 1: Overview
 ### Problem statement: 
-Singapore tends to have quite unpredictable weather and there are many things to look out for: rain, thunder, UV, heat and sometimes even haze. Singapore also has a tendency for two regions to have vastly differing weather conditions. NEA's weather forecast metrics also tend to be distributed across the NEA site and I need to search for them separately. 
+Singapore tends to have quite unpredictable weather and there are many things to look out for: rain, thunder, UV, heat and sometimes even haze. Singapore also has a tendency for two regions to have vastly differing weather conditions. NEA's weather forecast metrics also tend to be distributed across the NEA site and I need to search for them separately, only for a metric to be refreshed and changed.
 
 As I gear up for my half marathon, it causes a lot of uncertainty and impacts my plans quite often as I tend to run in the opposite end of SG from where I live.
 
