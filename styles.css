@@ -118,3 +118,19 @@ button:hover{
         gap: 0px;                /* space between them */
         padding: 60px 20px;       /* breathing room around the block */
 }
+
+/*park result cards*/
+.response{
+    display: flex;
+    flex-wrap: wrap;          /* move cards to the next row when full */
+    justify-content: center;
+    gap: 20px;
+    padding: 0 20px 40px;
+}
+
+.park-card{
+    width: 260px;
+    padding: 20px;
+    border-radius: 20px;
+    background-color: var(--background-3);
+}
