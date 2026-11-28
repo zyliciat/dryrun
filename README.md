@@ -11,7 +11,7 @@ Alicia Teo | [github repo README link](https://github.com/zyliciat/dryrun/blob/m
 7. [References](#7-references)
 
 ## 1: Overview
-### Problem statement
+### Problem Statement
 Singapore tends to have quite unpredictable weather and there are many things to look out for: rain, thunder, UV, heat and sometimes even haze. Singapore also has a tendency for two regions to have vastly differing weather conditions. NEA's weather forecast metrics also tend to be distributed across the NEA site and I need to search for them separately, only for a metric to be refreshed and changed.
 
 As I gear up for my half marathon, it causes a lot of uncertainty and impacts my plans quite often as I tend to run in the opposite end of SG from where I live.
@@ -29,7 +29,7 @@ Encourage and enable healthy lifestyle by removing barriers to regular exercise 
 (Sources: [Straits times: People adjusting their outdoor activities when there is heat](https://www.straitstimes.com/singapore/environment/want-to-be-heat-resilient-short-bouts-of-exercise-outdoors-could-be-more-helpful-than-blasting-the?ref=inline-article), [CNA: adjusting outdoor activities with haze](https://www.youtube.com/watch?v=sJFtb3OONxo))
 
 ## 2: Design Process
-### Some user stories
+### User Stories
 |User Story|Prioritisation|
 |----------|--------------|
 |As a runner, I want to see key metrics like UV, weather(rainy/sunny/thunder/lightning), haze, rainfall levels for a park I am interested in | High |
@@ -37,7 +37,7 @@ Encourage and enable healthy lifestyle by removing barriers to regular exercise 
 |As a runner, I would like to be able to provide thresholds to customise the park scoring to my own comfort levels | Medium |
 | Future-state: As a runner, I would like a way to observe trends to understand how a weather condition is changing in real time | Medium |
 
-### UI design process
+### UI Design Process
 
 Figma wireframe design process: https://www.figma.com/design/Tfalmy9SYrz2bxKi7cQABj/dryrun-UI?node-id=0-1&t=K0Jpfpf6H3ypfnee-1
 
@@ -53,7 +53,7 @@ Figma wireframe design process: https://www.figma.com/design/Tfalmy9SYrz2bxKi7cQ
 
 ## 4: Technologies Used
 
-### Technologies used
+### Technologies Used
 - **HTML 5** for webpage structures
 - **CSS** for styling
 - **JS** for fetching data, classifications and manipulating outputs to be passed back to the html and reflected on the frontend
@@ -62,7 +62,7 @@ Figma wireframe design process: https://www.figma.com/design/Tfalmy9SYrz2bxKi7cQ
 - **google fonts** for import of the host grotesk font
 - **github** for CI/CD and website deployment to github pages
 
-### API End points used
+### API End Points Used
 Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 
 | API | Endpoint (GET) | Data used | Matched to park by |
@@ -73,7 +73,7 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 | UV index | `/uv` | Latest UV index | Same value for all of Singapore |
 | WBGT | `/weather?api=wbgt` | WBGT value and heat stress level | Nearest station |
 
-**NEA Weather API reading refresh frequency** 
+**NEA Weather API Reading Refresh Frequency** 
 - Rainfall: every 5 minutes
 - Forecast (next 2 hours): every 30 minutes
 - PSI (24h average): every hour
