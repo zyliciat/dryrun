@@ -5,17 +5,18 @@ Alicia Teo | [github repo README link](https://github.com/zyliciat/dryrun/blob/m
 1. [Overview](#1-overview)
 2. [Design Process](#2-design-process)
 3. [Features](#3-features)
-4. [Technologies Used & Technical Decisions](#4-technologies-used--technical-decisions)
-5. [Testing](#5-testing)
-6. [Credits](#6-credits)
+4. [Technologies Used](#4-technologies-used)
+5. [Approach & Technical Considerations](#5-approach--technical-considerations)
+6. [Testing](#6-testing)
+7. [References](#7-references)
 
 ## 1: Overview
-### Problem statement: 
+### Problem statement
 Singapore tends to have quite unpredictable weather and there are many things to look out for: rain, thunder, UV, heat and sometimes even haze. Singapore also has a tendency for two regions to have vastly differing weather conditions. NEA's weather forecast metrics also tend to be distributed across the NEA site and I need to search for them separately, only for a metric to be refreshed and changed.
 
 As I gear up for my half marathon, it causes a lot of uncertainty and impacts my plans quite often as I tend to run in the opposite end of SG from where I live.
 
-### Objective: 
+### Objective 
 I created this website for
 1. let's be real - it is for a programming assignment
 2. but also wanted to create an website that I myself could use when going for runs, to check weather conditions for the particular area I'm running consolidating the stats that I want to see. 
@@ -50,9 +51,9 @@ Figma wireframe design process: https://www.figma.com/design/Tfalmy9SYrz2bxKi7cQ
 2. The cards for each park's weather information is classified based on Good, OK, Not Good or Bad, based on certain thresholds. 
 3. On first page load, it is classified based on a default setting. However, the user can choose to change the threshold settings to reflect their comfort level and the classifications will be reflected accordingly. The forecast rules are fixed: they are shown in the same table but cannot be edited.
 
-## 4: Technologies Used & Technical Decisions
+## 4: Technologies Used
 
-### Technologies used: 
+### Technologies used
 - **HTML 5** for webpage structures
 - **CSS** for styling
 - **JS** for fetching data, classifications and manipulating outputs to be passed back to the html and reflected on the frontend
@@ -72,17 +73,35 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 | UV index | `/uv` | Latest UV index | Same value for all of Singapore |
 | WBGT | `/weather?api=wbgt` | WBGT value and heat stress level | Nearest station |
 
-### Technical Decisions
+**NEA Weather API reading refresh frequency** 
+- Rainfall: every 5 minutes
+- Forecast (next 2 hours): every 30 minutes
+- PSI (24h average): every hour
+- UV index: every hour, from 7am to 7pm
+- WBGT: every 15 minutes
+
+## 5: Approach & Technical Considerations
+
+#### Approach
+
+The app starts from one list of parks, gathers the latest readings for each park, then rates each park on its worst reading.
+
+- **One park list as the starting point:** each park is stored with its area, region and coordinates, because the APIs identify locations differently.
+- **One function per API:** each function calls its endpoint once, then goes through the park list to pick each park’s reading:
+  - rainfall and WBGT: nearest station, by straight-line distance (Pythagoras theorem)
+  - forecast: the park’s area
+  - PSI: the park’s region
+  - UV: one value for all of Singapore
+- **Fetch together, then combine:** all five functions run at once using `Promise.allSettled`, and their results are combined into one record per park. If one API fails, the other readings still show. An error message appears only if all five fail.
+- **Worst reading wins:** each park is rated Good, OK, Not Good or Bad according to the worst category any reading reaches, so one serious hazard is not hidden by other good readings.
+- **Missing is not Good:** a park with any missing reading is rated OK at best.
+- **Some rules are non-negotiable:** drizzle forecast is OK, rain or showers is Not Good, and thundery or heavy is Bad. Users cannot edit these, as thunder should never be set as OK to run in.
+
+#### Technical Considerations
 
 | Category | Decision | Remarks |
 |----------|----------|---------|
-| Data | Store all parks in one list with area, region and coordinates | Each API identifies location differently. A new park only needs one new entry. |
-| Data | Use the nearest station for rainfall and WBGT, area for forecast and region for PSI | Matches how each dataset is reported. Nearest means straight-line distance from the park's midpoint, which may not represent a long route. UV is one value for all of Singapore, so it does not help compare parks. |
-| API handling | Call all five APIs together using `Promise.allSettled` | Faster than calling them one by one. If some fail, the cards still show the other readings and the failed ones are treated as missing. An error message is shown only if all five fail. |
 | API handling | Wait 5 seconds and retry up to 3 times on "too many requests" (429) | Handles rate limits without the user having to reload. Other errors are not retried. |
-| Classification | Give each park the worst category that any reading reaches | One serious hazard should not be hidden by other good readings. |
-| Classification | Classify a park no better than "OK" if any reading is missing, and name the missing reading as the issue | A park is not shown as "Good" without all the information. Applies to forecast, rainfall, PSI, UV and WBGT. If another reading puts the park in a worse category, the issue line names that cause instead, and the card shows "no reading" for the missing one. |
-| Classification | Use fixed forecast rules: drizzle is "OK", rain or showers is "Not Good", and thundery or heavy is "Bad" | These are non-negotiable, so users cannot edit them: thunder should never be set as OK to run in. The forecast is checked separately from the measured rainfall, and the park takes the worse of the two. |
 | Classification | Show what caused the status on each card that is not "Good" | Helps users judge for themselves whether the issue matters to them. |
 | User settings | Save custom thresholds in local storage, with a reset button | Settings are kept between visits without needing accounts or a server, but only on that browser. |
 | User settings | Only save thresholds that increase from OK to Bad | Prevents settings that would not make sense. |
@@ -90,7 +109,7 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 | Accessibility | Turn off the logo animation for users who prefer reduced motion | Moving elements can be uncomfortable for some users. |
 | Accessibility | Give each threshold box its own label | Screen readers can tell the boxes in the table apart. |
 
-## 5: Testing
+## 6: Testing
 
 |Test Case | Resolution |
 |----------|------------|
@@ -106,7 +125,7 @@ Base URL: `https://api-open.data.gov.sg/v2/real-time/api`
 | Custom thresholds should remain after reloading the page | They are saved in the browser's local storage. The reset button removes them and restores the defaults. |
 | Page should fit a mobile screen | Open: the cards wrap, but the rest of the layout has not been adjusted for small screens. |
 
-## 6: Credits
+## 7: References
 | Reference | Purpose |
 |--------|-----|
 | [data.gov Environment Related APIs](https://data.gov.sg/datasets?formats=API&topics=environment) | NEA APIs |
