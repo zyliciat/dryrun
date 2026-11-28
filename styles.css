@@ -41,12 +41,6 @@ h3{
     font-weight:bolder;
 }
 
-.caption{
-    font-size: 12px;
-    font-weight:normal;
-    padding: 0 40px;     /* line up with the cards */
-}
-
 /*button styling definition*/
 button{
     position: relative; /*so that the button position is used to position the arrow*/
@@ -156,6 +150,12 @@ button:hover{
 .category-caption{
     align-self: flex-start;  /* move to the left of the centred section */
     text-align: left;
+    padding: 0 40px;         /* line up with the cards */
+}
+
+/*notes at the bottom of the page*/
+.page-notes{
+    padding: 0 40px;     /* line up with the cards */
 }
 
 /*heading above the results*/
