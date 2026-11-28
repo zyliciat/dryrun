@@ -94,7 +94,7 @@ The app starts from one list of parks, gathers the latest readings for each park
   - UV: one value for all of Singapore
 - **Fetch together, then combine:** all five functions run at once using `Promise.allSettled`, and their results are combined into one record per park. If one API fails, the other readings still show. An error message appears only if all five fail.
 - **Worst reading wins:** each park is rated `Good`, `OK`, `Not Good` or `Bad` according to the worst category any reading reaches, so one serious hazard is not hidden by other good readings. If a park is not `Good`, an issue field is included in the card listing the main threshold violation(s) that caused its severity rating.
-<br><sub>*Example: if a park has 1 metric at `Not Good` and 2 metrics at `Bad`, it gets rated `Bad` and only lists the 2 `Bad` metrics.*</sub>
+<br><sub>*Example: if a park has 1 metric at `Not Good` and 2 metrics at `Bad`, it gets rated `Bad` and only lists the 2 `Bad` metrics as issues.*</sub>
 - **Missing is not Good:** a park with any missing reading is rated OK at best.
 - **Some rules are non-negotiable:** drizzle forecast is OK, rain or showers is Not Good, and thundery or heavy is Bad. Users cannot edit these, as thunder should never be set as OK to run in.
 
